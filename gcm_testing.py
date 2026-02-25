@@ -1,16 +1,6 @@
 from gcm import aes_gcm_encrypt
 from Crypto.Random import get_random_bytes
-
-def hex_to_list(hex_str: str):
-    """auxiliary function: convert hexadecimal string to list of integers"""
-    return [int(hex_str[i:i+2], 16) for i in range(0, len(hex_str), 2)]
-
-def list_to_hex(l: list):
-    """auxiliary function: convert list of integers to hexadecimal string"""
-    return "".join(f"{b:02x}" for b in l)
-
-def string_to_list(s: str):
-    return list(s.encode("utf-8"))
+from gcm_auxiliary import hex_to_list, list_to_hex, string_to_list
 
 def test_aes_gcm():
     key = hex_to_list("feffe9928665731c6d6a8f9467308308")

@@ -112,4 +112,7 @@ def aes_gcm_decrypt(ciphertext: List[int], key: List[int], iv: List[int], aad: L
             # XOR ciphertext block with keystream to get plaintext block 
             plaintext.extend(xor_bytes(block, keystream))
 
+    if plaintext is not None:
+        plaintext = bytes(plaintext).decode("utf-8")
+
     return plaintext, is_valid
