@@ -25,6 +25,7 @@ def aes_gcm_encrypt(plaintext: List[int], key: List[int], iv: List[int], aad: Li
     J0 = iv + [0, 0, 0, 1]
     counter = J0.copy()
 
+    # CTR mode encryption
     ciphertext = []
     # Seperate plaintext into 16-byte blocks and encrypt each block
     for i in range(0, len(plaintext), 16):
@@ -51,7 +52,7 @@ def aes_gcm_encrypt(plaintext: List[int], key: List[int], iv: List[int], aad: Li
     len_block = int_to_list(len(aad) * 8, 8) + int_to_list(len(ciphertext) * 8, 8)
     X = gcm_gf_mult(xor_bytes(X, len_block), h)
     # Derive the final MAC tag by XORing GHASH output with E(J0)
-    E_J0 = aes128(J0, key)
+    E_J0 = aes128(J0, key)      
     mac = xor_bytes(X, E_J0)
 
     return ciphertext, mac

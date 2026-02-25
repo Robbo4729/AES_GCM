@@ -9,7 +9,7 @@ def list_to_hex(l: list):
     return "".join(f"{b:02x}" for b in l)
 
 def decryption_test():
-    with open("transmit_information.txt", "r") as f:
+    with open("encrypted_information.txt", "r") as f:
         lines = f.readlines()
         ciphertext = lines[0].split(": ")[1].strip()
         mac = lines[1].split(": ")[1].strip()

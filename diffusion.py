@@ -1,7 +1,7 @@
 # GF(2^8) multiplication
 def gf_mul(a, b):
     """
-    Multiply two bytes in GF(2^8) with AES modulus x^8+x^4+x^3+x+1 (0x11b)
+    Multiply two bytes in GF(2^8) with AES modulus     x^8 + x^4 + x^3 + x + 1 (0x11B).
     """
     result = 0
     for _ in range(8):
