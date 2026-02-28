@@ -19,6 +19,9 @@ def list_to_hex(l: list):
 def string_to_list(s: str):
     return list(s.encode("utf-8"))
 
+def list_to_string(l: list): 
+    return ''.join(chr(x) for x in l)
+
 def xor_bytes(a: List[int], b: List[int]) -> List[int]:
     return [x ^ y for x, y in zip(a, b)]
 
