@@ -1,6 +1,6 @@
 # author: linzheng tan 
 # this is a demo showing the iv reused attack with SAME AAD, different message length
-# and only one message block (<= 128 bits)
+# and no larger than one-block message (<= 128 bits)
 
 from gcm import aes_gcm_encrypt, aes_gcm_decrypt
 from ghash import gcm_gf_mult
@@ -43,13 +43,10 @@ def iv_reused_attack_c():
 
     print(f"[*] AAD: '{aad_str}'")
     
-    # Formatting for aligned output
-    # Using padding to ensure the '|' aligns perfectly
     msg1_info = f"[*] Msg 1: '{p1_str}' (Len: {len(p1)*8} bits)"
     msg2_info = f"[*] Msg 2: '{p2_str}' (Len: {len(p2)*8} bits)"
     msg3_info = f"[*] Msg 3: '{p3_str}' (Len: {len(p3)*8} bits)"
     
-    # Pad to 45 characters (adjustable based on longest message)
     print(f"{msg1_info:<45} | Tag: {list_to_hex(t1)}")
     print(f"{msg2_info:<45} | Tag: {list_to_hex(t2)}")
     print(f"{msg3_info:<45} | Tag: {list_to_hex(t3)} (Verifier)")
@@ -59,7 +56,7 @@ def iv_reused_attack_c():
     
     delta_t = xor_bytes(t1, t2)
     
-    # CRITICAL: Coefficients must be calculated on PADDED blocks!
+    # Padded blocks
     c1_padded = pad_block(c1)
     c2_padded = pad_block(c2)
     delta_c = xor_bytes(c1_padded, c2_padded)

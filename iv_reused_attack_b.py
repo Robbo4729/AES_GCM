@@ -1,6 +1,6 @@
 # author: linzheng tan 
-# this is a demo showing the iv reused attack without AAD, same message length
-# and only one message block (<= 128 bits)
+# this is a demo showing the iv reused attack without AAD and with 
+# one-block message
 
 from gcm import aes_gcm_encrypt, aes_gcm_decrypt
 from ghash import gcm_gf_mult
