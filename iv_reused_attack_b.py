@@ -59,7 +59,10 @@ def iv_reused_attack_b():
     p_forged = "Pay Eve $9999999" 
     print(f"[*] Target Forged Message: '{p_forged}'")
     
-    keystream = xor_bytes(c1, string_to_list(p1_str))
+    # Known plaintext/ciphertext pair (e.g., attacker-injected "AAAA..." message)
+    known_p_str = "AAAAAAAAAAAAAAAA"
+    known_c, _ = aes_gcm_encrypt(string_to_list(known_p_str), key, reused_iv)
+    keystream = xor_bytes(known_c, string_to_list(known_p_str))
     c_forged = xor_bytes(string_to_list(p_forged), keystream)
     
     ch2_forged = gcm_gf_mult(c_forged, h_squared)

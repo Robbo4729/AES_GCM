@@ -129,12 +129,17 @@ def iv_reused_attack_c():
         return
 
     print("\n--- STEP 4: Forgery ---")
+
     p_forged = "Pay Eve $9999999" 
+    p_forged_bytes = string_to_list(p_forged)
     print(f"[*] Target Forged Message: '{p_forged}'")
     
     # 1. Encrypt using Keystream from Message 2
-    keystream = xor_bytes(p2, c2)
-    p_forged_bytes = string_to_list(p_forged)
+    # Known plaintext/ciphertext pair (e.g., attacker-injected "AAAA..." message)
+    known_p_str = "AAAAAAAAAAAAAAAA"
+    known_c, _ = aes_gcm_encrypt(string_to_list(known_p_str), key, reused_iv)
+
+    keystream = xor_bytes(known_c, string_to_list(known_p_str))
     
     if len(p_forged_bytes) > len(keystream):
         print("[!] Error: Forged message too long for captured keystream.")
