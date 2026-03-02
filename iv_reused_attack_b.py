@@ -1,6 +1,6 @@
 # author: linzheng tan 
-# this is a demo showing the iv reused attack without AAD, same message length
-# and only one message block (<= 128 bits)
+# this is a demo showing the iv reused attack without AAD and with 
+# one-block message
 
 from gcm import aes_gcm_encrypt, aes_gcm_decrypt
 from ghash import gcm_gf_mult
@@ -11,7 +11,7 @@ from gcm_auxiliary import (
 from aes import aes128
 from attack_auxiliary import gf_inverse, gf_sqrt
 
-def iv_reused_attack_a():
+def iv_reused_attack_b():
     # Simulation of the shared key between the Bank and Alice
     key = hex_to_list("feffe9928665731c6d6a8f9467308308")
     # FATAL ERROR: The same IV is reused for different messages
@@ -59,7 +59,10 @@ def iv_reused_attack_a():
     p_forged = "Pay Eve $9999999" 
     print(f"[*] Target Forged Message: '{p_forged}'")
     
-    keystream = xor_bytes(c1, string_to_list(p1_str))
+    # Known plaintext/ciphertext pair (e.g., attacker-injected "AAAA..." message)
+    known_p_str = "AAAAAAAAAAAAAAAA"
+    known_c, _ = aes_gcm_encrypt(string_to_list(known_p_str), key, reused_iv)
+    keystream = xor_bytes(known_c, string_to_list(known_p_str))
     c_forged = xor_bytes(string_to_list(p_forged), keystream)
     
     ch2_forged = gcm_gf_mult(c_forged, h_squared)
@@ -84,4 +87,4 @@ def iv_reused_attack_a():
         print("[FAIL] Bank System: ERROR! Tampering detected, rejecting transaction.")
 
 if __name__ == "__main__":
-    iv_reused_attack_a()
+    iv_reused_attack_b()

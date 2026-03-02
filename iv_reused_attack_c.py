@@ -1,6 +1,6 @@
 # author: linzheng tan 
 # this is a demo showing the iv reused attack with SAME AAD, different message length
-# and only one message block (<= 128 bits)
+# and no larger than one-block message (<= 128 bits)
 
 from gcm import aes_gcm_encrypt, aes_gcm_decrypt
 from ghash import gcm_gf_mult
@@ -14,7 +14,7 @@ def pad_block(data):
     """Pad data to 16 bytes (128 bits) with zeros."""
     return data + [0] * (16 - len(data))
 
-def iv_reused_attack_b():
+def iv_reused_attack_c():
     # Simulation of the shared key between the Bank and Alice
     key = hex_to_list("feffe9928665731c6d6a8f9467308308")
     # FATAL ERROR: The same IV is reused for different messages
@@ -43,13 +43,10 @@ def iv_reused_attack_b():
 
     print(f"[*] AAD: '{aad_str}'")
     
-    # Formatting for aligned output
-    # Using padding to ensure the '|' aligns perfectly
     msg1_info = f"[*] Msg 1: '{p1_str}' (Len: {len(p1)*8} bits)"
     msg2_info = f"[*] Msg 2: '{p2_str}' (Len: {len(p2)*8} bits)"
     msg3_info = f"[*] Msg 3: '{p3_str}' (Len: {len(p3)*8} bits)"
     
-    # Pad to 50 characters (adjustable based on longest message)
     print(f"{msg1_info:<45} | Tag: {list_to_hex(t1)}")
     print(f"{msg2_info:<45} | Tag: {list_to_hex(t2)}")
     print(f"{msg3_info:<45} | Tag: {list_to_hex(t3)} (Verifier)")
@@ -59,7 +56,7 @@ def iv_reused_attack_b():
     
     delta_t = xor_bytes(t1, t2)
     
-    # CRITICAL: Coefficients must be calculated on PADDED blocks!
+    # Padded blocks
     c1_padded = pad_block(c1)
     c2_padded = pad_block(c2)
     delta_c = xor_bytes(c1_padded, c2_padded)
@@ -129,12 +126,17 @@ def iv_reused_attack_b():
         return
 
     print("\n--- STEP 4: Forgery ---")
+
     p_forged = "Pay Eve $9999999" 
+    p_forged_bytes = string_to_list(p_forged)
     print(f"[*] Target Forged Message: '{p_forged}'")
     
     # 1. Encrypt using Keystream from Message 2
-    keystream = xor_bytes(p2, c2)
-    p_forged_bytes = string_to_list(p_forged)
+    # Known plaintext/ciphertext pair (e.g., attacker-injected "AAAA..." message)
+    known_p_str = "AAAAAAAAAAAAAAAA"
+    known_c, _ = aes_gcm_encrypt(string_to_list(known_p_str), key, reused_iv)
+
+    keystream = xor_bytes(known_c, string_to_list(known_p_str))
     
     if len(p_forged_bytes) > len(keystream):
         print("[!] Error: Forged message too long for captured keystream.")
@@ -174,4 +176,4 @@ def iv_reused_attack_b():
         print("[FAIL] Bank System: ERROR! Tampering detected.")
 
 if __name__ == "__main__":
-    iv_reused_attack_b()
+    iv_reused_attack_c()
